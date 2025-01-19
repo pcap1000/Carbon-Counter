@@ -3,7 +3,7 @@ import openrouteservice
 import folium
 from openrouteservice.optimization import Vehicle, Job
 import numpy as np
-# venv\Scripts\activate 
+
 app = Flask(__name__)
 
 # OpenRouteService API Key
@@ -212,6 +212,14 @@ def route_optimisation():
 @app.route('/warehouse_optimisation', methods=['GET'])
 def warehouse_optimisation():
     return render_template('warehouse_optimisation.html')
+
+@app.route('/architecture', methods=['GET'])
+def architecture():
+    return render_template('architecture.html')
+
+@app.route('/workflow', methods=['GET'])
+def workflow():
+    return render_template('workflow.html')
 
 @app.route('/', methods=['GET'])
 def index():
