@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carbon Counter</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary-color: #065F46;
+      --secondary-color: #059669;
+      --accent-color: #34D399;
+      --background-color: #ECFDF5;
+      --card-background: #FFFFFF;
+      --nav-background: rgba(255, 255, 255, 0.95);
+      --text-primary: #1A202C;
+      --text-secondary: #4A5568;
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+      --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Enhanced Header & Navigation */
+    .header {
+      background: var(--gradient);
+      padding: 1.5rem 2rem;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z' fill='%23ffffff' fill-opacity='0.1'/%3E%3C/svg%3E");
+      opacity: 0.1;
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-row i {
+      font-size: 2rem;
+    }
+
+    /* Modern Navbar */
+    .navbar {
+      background: var(--nav-background);
+      backdrop-filter: blur(10px);
+      padding: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: var(--text-primary);
+      text-decoration: none;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      background: transparent;
+      border: 2px solid transparent;
+    }
+
+    .nav-links a:hover {
+      background: var(--accent-color);
+      color: var(--primary-color);
+      transform: translateY(-2px);
+    }
+
+    .nav-links a.active {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    /* Mobile Navigation */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+
+    /* Main Content Enhancements */
+    .main-content {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    /* Enhanced Metrics Cards */
+    .container-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .metric {
+      background: var(--card-background);
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .metric:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .metric i {
+      font-size: 2rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      color: transparent;
+      margin-bottom: 1rem;
+    }
+
+    .metric h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .metric p {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    /* Chart Container */
+    .container-3 {
+      background: var(--card-background);
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    /* Additional Content */
+    .container-4 {
+      background: var(--card-background);
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .header {
+        padding: 1rem;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .nav-links {
+        display: none;
+        width: 100%;
+        padding-top: 1rem;
+      }
+
+      .nav-links.show {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .nav-links a {
+        width: 100%;
+        text-align: center;
+      }
+
+      .container-2 {
+        grid-template-columns: 1fr;
+      }
+
+      /* Hide chart container on mobile */
+      .container-3 {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .logo-row {
+        font-size: 1.25rem;
+      }
+
+      .metric {
+        padding: 1.25rem;
+      }
+
+      .main-content {
+        margin: 1rem auto;
+      }
+    }
+
+    /* Status Indicators */
+    .positive {
+      color: var(--secondary-color);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .negative {
+      color: #DC2626;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header with Pattern -->
+  <header class="header">
+    <div class="logo-row">
+      <i class="fas fa-leaf"></i>
+      Carbon Counter
+    </div>
+  </header>
+
+  <!-- Modern Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <button class="mobile-menu-btn">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="nav-links">
+        <a href="#" class="active">Dashboard</a>
+        <a href="#" onclick="openRouteOptimisation()">Route Optimization</a>
+        <a href="#" onclick="openPackageOptimisation()">Package Optimization</a>
+        <a href="#" onclick="openWarehouseOptimisation()">Warehouse Optimization</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Rest of the content remains the same -->
+  <div class="main-content">
+    <div class="container-2">
+      <div class="metric">
+        <i class="fas fa-coins"></i>
+        <h2>Total Cost Saved</h2>
+        <p id="total-cost">Loading...</p>
+      </div>
+      <div class="metric">
+        <i class="fas fa-tree"></i>
+        <h2>Trees Saved</h2>
+        <p id="trees-saved">Loading...</p>
+      </div>
+      <div class="metric">
+        <i class="fas fa-clock"></i>
+        <h2>Time Saved</h2>
+        <p id="time-saved">Loading...</p>
+      </div>
+    </div>
+
+    <div class="container-3">
+      <canvas id="myChart"></canvas>
+    </div>
+
+    <div class="container-4">
+      <h2>Additional Information</h2>
+      <p>This section can display additional details or metrics.</p>
+    </div>
+  </div>
+
+  <script>
+    // Mobile menu toggle
+    document.querySelector('.mobile-menu-btn').addEventListener('click', function () {
+      document.querySelector('.nav-links').classList.toggle('show');
+    });
+
+    // Metrics update
+    function updateMetrics() {
+      const totalCost = 789;
+      const treesSaved = 120;
+      const timeSaved = 98;
+
+      document.getElementById("total-cost").innerHTML = `$${totalCost.toLocaleString()} <span class="positive">+5.45%</span>`;
+      document.getElementById("trees-saved").innerHTML = `${treesSaved.toLocaleString()} <span class="negative">-0.45%</span>`;
+      document.getElementById("time-saved").innerHTML = `${timeSaved.toLocaleString()}h <span class="positive">+5.45%</span>`;
+    }
+
+    updateMetrics();
+
+    // Chart configuration
+    const ctx = document.getElementById("myChart").getContext("2d");
+    const myChart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: ["January", "February", "March", "April", "May", "June"],
+        datasets: [
+          {
+            label: "Total Cost Saved",
+            data: [500, 600, 700, 800, 900, 1000],
+            borderColor: "#059669",
+            tension: 0.4,
+            borderWidth: 2,
+          },
+          {
+            label: "Trees Saved",
+            data: [50, 100, 150, 200, 250, 300],
+            borderColor: "#34D399",
+            tension: 0.4,
+            borderWidth: 2,
+          },
+          {
+            label: "Time Saved",
+            data: [10, 20, 30, 40, 50, 60],
+            borderColor: "#065F46",
+            tension: 0.4,
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+          x: {
+            grid: {
+              display: false
+            }
+          },
+          y: {
+            grid: {
+              borderDash: [2, 4]
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              usePointStyle: true,
+              padding: 20
+            }
+          }
+        },
+      },
+    });
+
+    // Navigation functions
+    function openRouteOptimisation() {
+      window.location.href = "/route_optimisation";
+    }
+
+    function openPackageOptimisation() {
+      window.location.href = "/package_optimisation";
+    }
+
+    function openWarehouseOptimisation() {
+      window.location.href = "/warehouse_optimisation";
+    }
+  </script>
+</body>
+
+</html>

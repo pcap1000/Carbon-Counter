@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Packaging Material Analyzer</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+
+.header {
+        background: var(--gradient);
+        padding: 1.5rem 2rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .header::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='%23ffffff' fill-opacity='0.1'/%3E%3C/svg%3E");
+        opacity: 0.1;
+      }
+      .logo-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+      }
+
+      .logo-row i {
+        font-size: 2rem;
+      }
+      :root {
+        --primary-color: #065F46;
+        --secondary-color: #059669;
+        --accent-color: #34D399;
+        --background-color: #ECFDF5;
+        --card-background: #FFFFFF;
+        --nav-background: rgba(255, 255, 255, 0.95);
+        --text-primary: #1A202C;
+        --text-secondary: #4A5568;
+        --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+        --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-primary);
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      .navbar {
+        background: var(--nav-background);
+        backdrop-filter: blur(10px);
+        padding: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+      }
+
+      .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .nav-links a {
+        color: var(--text-primary);
+        text-decoration: none;
+        padding: 0.75rem 1.25rem;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: transparent;
+        border: 2px solid transparent;
+      }
+
+      .nav-links a:hover {
+        background: var(--accent-color);
+        color: var(--primary-color);
+        transform: translateY(-2px);
+      }
+
+      .nav-links a.active {
+        background: var(--primary-color);
+        color: white;
+      }
+
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+          flex-direction: column;
+          width: 100%;
+          padding-top: 1rem;
+        }
+
+        .nav-links.show {
+          display: flex;
+        }
+
+        .mobile-menu-btn {
+          display: block;
+        }
+
+        .nav-links a {
+          width: 100%;
+          text-align: center;
+        }
+      }
+
+      .mobile-menu-btn {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0.5rem;
+      }
+
+      /* Existing styles for the packaging analyzer */
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f8f0;
+        color: #333;
+      }
+
+      .container {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .input-section {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+      }
+
+      .input-section label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #2e8b57;
+      }
+
+      .input-section input,
+      .input-section select,
+      .input-section button {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 14px;
+      }
+
+      .input-section button {
+        background-color: #2e8b57;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        grid-column: span 2;
+      }
+
+      .input-section button:hover {
+        background-color: #3cb371;
+      }
+
+      .output-section {
+        display: none;
+        margin-top: 20px;
+      }
+
+      .results-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+      }
+
+      .tile {
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .tile h3 {
+        margin-top: 0;
+        color: #2e8b57;
+      }
+
+      .bold {
+        font-weight: bold;
+      }
+
+      .results-container .tile:last-child:nth-child(odd) {
+        grid-column: span 2;
+      }
+
+      .graph-section {
+        margin-top: 30px;
+      }
+
+      .graph-section h2 {
+        margin-bottom: 20px;
+      }
+
+      .graph-container {
+        margin-bottom: 30px;
+      }
+
+      #productName,
+      #dimensions,
+      #weight {
+        width: 97.2%;
+      }
+      .mobile-menu-btn {
+  display: none; /* Hide by default */
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: block; /* Show on mobile */
+  }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    padding-top: 1rem;
+  }
+
+  .nav-links.show {
+    display: flex;
+  }
+}
+    </style>
+    <!-- Include Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <header class="header">
+      <div class="logo-row">
+        <i class="fa-solid fa-box-open"></i>
+        Packaging Material Analyzer 
+      </div>
+    </header>
+    <nav class="navbar">
+      <div class="nav-container">
+        <button class="mobile-menu-btn">
+          <i class="fas fa-bars"></i> <!-- Font Awesome icon -->
+        </button>
+        <div class="nav-links">
+          <a href="#" onclick="dashboard()">Dashboard</a>
+          <a href="#" onclick="openRouteOptimisation()">Route Optimization</a>
+          <a href="#" class="active">Package Optimization</a>
+          <a href="#" onclick="openWarehouseOptimisation()">Warehouse Optimization</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <h1>📦 Packaging Material Analyzer 🌿</h1>
+      <div class="input-section">
+        <div>
+          <label for="productName">Product Name:</label>
+          <input
+            type="text"
+            id="productName"
+            placeholder="Enter product name"
+          />
+        </div>
+        <div>
+          <label for="productKind">Product Kind:</label>
+          <select id="productKind">
+            <option value="electronics">📱 Electronics</option>
+            <option value="food">🍎 Food</option>
+            <option value="clothing">👕 Clothing</option>
+            <option value="fragile">🧪 Fragile Items</option>
+            <option value="other">📦 Other</option>
+          </select>
+        </div>
+        <div>
+          <label for="dimensions">Dimensions (L x W x H in cm):</label>
+          <input type="text" id="dimensions" placeholder="e.g., 10x10x10" />
+        </div>
+        <div>
+          <label for="weight">Weight (in grams):</label>
+          <input type="number" id="weight" placeholder="e.g., 500" />
+        </div>
+        <div>
+          <label for="fragile">Is the product fragile?</label>
+          <select id="fragile">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div>
+          <label for="packagingType">Packaging Type:</label>
+          <select id="packagingType">
+            <option value="bag">🛍️ Bag</option>
+            <option value="box">📦 Box</option>
+          </select>
+        </div>
+        <div>
+          <label for="temperature">Temperature Requirements:</label>
+          <select id="temperature">
+            <option value="none">🌡️ None</option>
+            <option value="hot">🔥 Hot</option>
+            <option value="cold">❄️ Cold</option>
+          </select>
+        </div>
+        <button onclick="analyze()">Analyze 🔍</button>
+      </div>
+
+      <div class="output-section">
+        <h2>Analysis Results 📊</h2>
+        <div class="results-container" id="results"></div>
+
+        <!-- Graphs Section -->
+        <div class="graph-section">
+          <h2>Environmental Impact Comparison 📈</h2>
+          <div class="graph-container">
+            <canvas id="carbonEmissionsChart"></canvas>
+          </div>
+          <div class="graph-container">
+            <canvas id="costChart"></canvas>
+          </div>
+          <div class="graph-container">
+            <canvas id="waterUseChart"></canvas>
+          </div>
+          <div class="graph-container">
+            <canvas id="fossilFuelsChart"></canvas>
+          </div>
+          <div class="graph-container">
+            <canvas id="energyUseChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+document.querySelector('.mobile-menu-btn').addEventListener('click', function () {
+  document.querySelector('.nav-links').classList.toggle('show');
+});
+
+      function dashboard() {
+        window.location.href = "/dashboard";
+      }
+
+      function openRouteOptimisation() {
+        window.location.href = "/route_optimisation";
+      }
+
+      function openWarehouseOptimisation() {
+        window.location.href = "/warehouse_optimisation";
+      }
+
+      // Existing JavaScript for the packaging analyzer
+      const materials = [
+        {
+          name: "Plastic Bags",
+          carbonEmissions: 2000, // kg CO₂/ton
+          cost: 1250, // $/ton (average of $1000-1500)
+          waterUse: 150, // liters/ton (average of 100-200)
+          fossilFuelsUsed: 1750, // liters/ton (average of 1500-2000)
+          energyUse: 22.5, // GJ/ton (average of 20-25)
+          density: 0.05, // Density in g/cm³
+        },
+        {
+          name: "Cardboard",
+          carbonEmissions: 1000,
+          cost: 750,
+          waterUse: 25000,
+          fossilFuelsUsed: 150,
+          energyUse: 12.5,
+          density: 0.69,
+        },
+        {
+          name: "Corrugated Bubble Wrap",
+          carbonEmissions: 600,
+          cost: 1350,
+          waterUse: 17500,
+          fossilFuelsUsed: 250,
+          energyUse: 12.5,
+          density: 0.05,
+        },
+        {
+          name: "Biodegradable Peanuts",
+          carbonEmissions: 400,
+          cost: 1750,
+          waterUse: 7500,
+          fossilFuelsUsed: 75,
+          energyUse: 7.5,
+          density: 0.03,
+        },
+        {
+          name: "Cornstarch Packaging",
+          carbonEmissions: 300,
+          cost: 2250,
+          waterUse: 12500,
+          fossilFuelsUsed: 150,
+          energyUse: 11,
+          density: 1.25,
+        },
+        {
+          name: "Seaweed Packaging",
+          carbonEmissions: 75,
+          cost: 4000,
+          waterUse: 750,
+          fossilFuelsUsed: 15,
+          energyUse: 3.5,
+          density: 1.02,
+        },
+        {
+          name: "Mushroom Packaging",
+          carbonEmissions: 150,
+          cost: 2000,
+          waterUse: 1500,
+          fossilFuelsUsed: 35,
+          energyUse: 6.5,
+          density: 0.25,
+        },
+      ];
+
+      // Initialize Chart.js instances
+      const carbonEmissionsChart = new Chart(
+        document.getElementById("carbonEmissionsChart"),
+        {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [],
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        }
+      );
+
+      const costChart = new Chart(document.getElementById("costChart"), {
+        type: "line",
+        data: {
+          labels: [],
+          datasets: [],
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+
+      const waterUseChart = new Chart(
+        document.getElementById("waterUseChart"),
+        {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [],
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        }
+      );
+
+      const fossilFuelsChart = new Chart(
+        document.getElementById("fossilFuelsChart"),
+        {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [],
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        }
+      );
+
+      const energyUseChart = new Chart(
+        document.getElementById("energyUseChart"),
+        {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [],
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        }
+      );
+
+      function analyze() {
+        const productName = document.getElementById("productName").value;
+        const productKind = document.getElementById("productKind").value;
+        const dimensions = document.getElementById("dimensions").value;
+        const weight = parseFloat(document.getElementById("weight").value);
+        const fragile = document.getElementById("fragile").value;
+        const packagingType = document.getElementById("packagingType").value;
+        const temperature = document.getElementById("temperature").value;
+
+        // Parse dimensions (AxBxC)
+        const [A, B, C] = dimensions.split("x").map(Number);
+
+        // Calculate surface area (in cm²)
+        const surfaceArea = 2 * (A * B + B * C + A * C);
+
+        const resultsContainer = document.getElementById("results");
+        resultsContainer.innerHTML = "";
+
+        // Arrays to store data for graphs
+        const labels = [];
+        const carbonEmissionsData = [];
+        const costData = [];
+        const waterUseData = [];
+        const fossilFuelsData = [];
+        const energyUseData = [];
+
+        materials.forEach((material) => {
+          // Calculate thickness (in cm)
+          const thickness = (weight / (material.density * surfaceArea)).toFixed(
+            2
+          );
+
+          // Calculate volume of material used (in cm³)
+          const volume = surfaceArea * thickness;
+
+          // Calculate weight of material used (in grams)
+          const materialWeight = volume * material.density;
+
+          // Convert weight from grams to tons (1 ton = 1,000,000 grams)
+          const materialWeightInTons = materialWeight / 1000000;
+
+          // Calculate environmental impact
+          const carbonEmissions =
+            materialWeightInTons * material.carbonEmissions;
+          const cost = materialWeightInTons * material.cost;
+          const waterUse = materialWeightInTons * material.waterUse;
+          const fossilFuelsUsed =
+            materialWeightInTons * material.fossilFuelsUsed;
+          const energyUse = materialWeightInTons * material.energyUse;
+
+          // Store data for graphs
+          labels.push(material.name);
+          carbonEmissionsData.push(carbonEmissions);
+          costData.push(cost);
+          waterUseData.push(waterUse);
+          fossilFuelsData.push(fossilFuelsUsed);
+          energyUseData.push(energyUse);
+
+          const tile = document.createElement("div");
+          tile.className = "tile";
+          tile.innerHTML = `
+          <h3>${material.name}</h3>
+          <p><span class="bold">Surface Area:</span> <span class="bold">${surfaceArea.toFixed(
+            2
+          )} cm²</span></p>
+          <p><span class="bold">Thickness:</span> <span class="bold">${thickness} cm</span></p>
+          <p><span class="bold">Weight of Material Used:</span> ${materialWeight.toFixed(
+            2
+          )} g</p>
+          <p><span class="bold">Carbon Emissions:</span> ${carbonEmissions.toFixed(
+            2
+          )} kg CO₂</p>
+          <p><span class="bold">Cost:</span> $${cost.toFixed(2)}</p>
+          <p><span class="bold">Water Use:</span> ${waterUse.toFixed(
+            2
+          )} liters</p>
+          <p><span class="bold">Fossil Fuels Used:</span> ${fossilFuelsUsed.toFixed(
+            2
+          )} liters</p>
+          <p><span class="bold">Energy Use:</span> ${energyUse.toFixed(
+            2
+          )} GJ</p>
+        `;
+          resultsContainer.appendChild(tile);
+        });
+
+        // Update graphs with data
+        carbonEmissionsChart.data.labels = labels;
+        carbonEmissionsChart.data.datasets = [
+          {
+            label: "Carbon Emissions (kg CO₂)",
+            data: carbonEmissionsData,
+            borderColor: "#ff4500",
+            fill: false,
+          },
+        ];
+        carbonEmissionsChart.update();
+
+        costChart.data.labels = labels;
+        costChart.data.datasets = [
+          {
+            label: "Cost ($)",
+            data: costData,
+            borderColor: "#228b22",
+            fill: false,
+          },
+        ];
+        costChart.update();
+
+        waterUseChart.data.labels = labels;
+        waterUseChart.data.datasets = [
+          {
+            label: "Water Use (liters)",
+            data: waterUseData,
+            borderColor: "#1e90ff",
+            fill: false,
+          },
+        ];
+        waterUseChart.update();
+
+        fossilFuelsChart.data.labels = labels;
+        fossilFuelsChart.data.datasets = [
+          {
+            label: "Fossil Fuels Used (liters)",
+            data: fossilFuelsData,
+            borderColor: "#ff8c00",
+            fill: false,
+          },
+        ];
+        fossilFuelsChart.update();
+
+        energyUseChart.data.labels = labels;
+        energyUseChart.data.datasets = [
+          {
+            label: "Energy Use (GJ)",
+            data: energyUseData,
+            borderColor: "#8a2be2",
+            fill: false,
+          },
+        ];
+        energyUseChart.update();
+
+        document.querySelector(".output-section").style.display = "block";
+      }
+    </script>
+  </body>
+</html>
