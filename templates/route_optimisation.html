@@ -1,546 +1,541 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Route Optimizer</title>
-    <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-  />
-  
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <style>
-      :root {
-        --primary-color: #065F46;
-        --secondary-color: #059669;
-        --accent-color: #34D399;
-        --background-color: #ECFDF5;
-        --card-background: #FFFFFF;
-        --nav-background: rgba(255, 255, 255, 0.95);
-        --text-primary: #1A202C;
-        --text-secondary: #4A5568;
-        --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
-        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-        --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-      }
 
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Route Optimizer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
-      body {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        background-color: var(--background-color);
-        color: var(--text-primary);
-        line-height: 1.6;
-        overflow-x: hidden;
-      }
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <style>
+    :root {
+      --primary-color: #065F46;
+      --secondary-color: #059669;
+      --accent-color: #34D399;
+      --background-color: #ECFDF5;
+      --card-background: #FFFFFF;
+      --nav-background: rgba(255, 255, 255, 0.95);
+      --text-primary: #1A202C;
+      --text-secondary: #4A5568;
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+      --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    }
 
-      .header {
-        background: var(--gradient);
-        padding: 1.5rem 2rem;
-        color: white;
-        position: relative;
-        overflow: hidden;
-      }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-      .header::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='%23ffffff' fill-opacity='0.1'/%3E%3C/svg%3E");
-        opacity: 0.1;
-      }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
 
-      .logo-row {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        font-size: 1.5rem;
-        font-weight: 700;
-        letter-spacing: -0.5px;
-      }
+    .header {
+      background: var(--gradient);
+      padding: 1.5rem 2rem;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
 
-      .logo-row i {
-        font-size: 2rem;
-      }
+    .header::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='%23ffffff' fill-opacity='0.1'/%3E%3C/svg%3E");
+      opacity: 0.1;
+    }
 
-      .navbar {
-        background: var(--nav-background);
-        backdrop-filter: blur(10px);
-        padding: 1rem;
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        box-shadow: var(--shadow-sm);
-        transition: all 0.3s ease;
-      }
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
 
-      .nav-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 1rem;
-      }
+    .logo-row i {
+      font-size: 2rem;
+    }
 
+    .navbar {
+      background: var(--nav-background);
+      backdrop-filter: blur(10px);
+      padding: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: var(--text-primary);
+      text-decoration: none;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      background: transparent;
+      border: 2px solid transparent;
+    }
+
+    .nav-links a:hover {
+      background: var(--accent-color);
+      color: var(--primary-color);
+      transform: translateY(-2px);
+    }
+
+    .nav-links a.active {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    @media (max-width: 768px) {
       .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        padding-top: 1rem;
+      }
+
+      .nav-links.show {
         display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
+      }
+
+      .mobile-menu-btn {
+        display: block;
       }
 
       .nav-links a {
-        color: var(--text-primary);
-        text-decoration: none;
-        padding: 0.75rem 1.25rem;
-        border-radius: 8px;
-        font-weight: 500;
-        font-size: 0.95rem;
-        transition: all 0.3s ease;
-        background: transparent;
-        border: 2px solid transparent;
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    /* Input Section */
+    .input-section {
+      flex: 1;
+      background: var(--card-background);
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .input-section h2 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+    }
+
+    textarea {
+      width: 100%;
+      height: 200px;
+      padding: 1rem;
+      border: 1px solid var(--accent-color);
+      border-radius: 8px;
+      background-color: var(--background-color);
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      resize: vertical;
+      margin-bottom: 1rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.75rem 1.25rem;
+      background: var(--gradient);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Map Section */
+    .map-section {
+      flex: 2;
+      background: var(--card-background);
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .map-section h2 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+    }
+
+    #map {
+      width: 100%;
+      height: 400px;
+      border-radius: 8px;
+      border: 1px solid var(--accent-color);
+    }
+
+    #unrouted-map {
+      width: 100%;
+      height: 650px;
+      border-radius: 8px;
+      border: 1px solid var(--accent-color);
+    }
+
+    /* Info Cards */
+    .map-comparison {
+      max-width: 1200px;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .map-box,
+    .distance-info {
+      background: var(--card-background);
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .map-title {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+    }
+
+    #map_88a64e9db7cfeae08320e1a9b73bd09e {
+      position: relative;
+      width: 100.0%;
+      height: 100.0%;
+      left: 0.0%;
+      top: 0.0%;
+    }
+
+    .leaflet-container {
+      font-size: 1rem;
+    }
+
+    .distance-info h2 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+    }
+
+    .distance-info p,
+    .distance-info li {
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--gradient);
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    footer p {
+      opacity: 0.9;
+      font-size: 0.95rem;
+      margin: 0.5rem 0;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .footer-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: opacity 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      opacity: 0.8;
+    }
+
+    .footer-links a.active {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    /* Error Message */
+    .error {
+      color: #DC2626;
+      margin-top: 1rem;
+      font-size: 0.95rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
       }
 
-      .nav-links a:hover {
-        background: var(--accent-color);
-        color: var(--primary-color);
-        transform: translateY(-2px);
-      }
-
-      .nav-links a.active {
-        background: var(--primary-color);
-        color: white;
-      }
-
-      @media (max-width: 768px) {
-        .nav-links {
-          display: none;
-          flex-direction: column;
-          width: 100%;
-          padding-top: 1rem;
-        }
-
-        .nav-links.show {
-          display: flex;
-        }
-
-        .mobile-menu-btn {
-          display: block;
-        }
-
-        .nav-links a {
-          width: 100%;
-          text-align: center;
-        }
-      }
-
-      .mobile-menu-btn {
-        display: none;
-        background: none;
-        border: none;
-        color: var(--text-primary);
-        font-size: 1.5rem;
-        cursor: pointer;
-        padding: 0.5rem;
-      }
-      :root {
-        --primary-color: #065F46;
-        --secondary-color: #059669;
-        --accent-color: #34D399;
-        --background-color: #ECFDF5;
-        --card-background: #FFFFFF;
-        --nav-background: rgba(255, 255, 255, 0.95);
-        --text-primary: #1A202C;
-        --text-secondary: #4A5568;
-        --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
-        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-        --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-      }
-
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-
-      body {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        background-color: var(--background-color);
-        color: var(--text-primary);
-        line-height: 1.6;
-        overflow-x: hidden;
-      }
-
-      /* Header */
-      .header {
-        background: var(--gradient);
-        padding: 1.5rem 2rem;
-        color: white;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .header::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='%23ffffff' fill-opacity='0.1'/%3E%3C/svg%3E");
-        opacity: 0.1;
+      .input-section,
+      .map-section {
+        width: 100%;
       }
 
       .logo-row {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        font-size: 1.5rem;
-        font-weight: 700;
-        letter-spacing: -0.5px;
+        font-size: 1.25rem;
       }
 
       .logo-row i {
-        font-size: 2rem;
+        font-size: 1.5rem;
       }
 
-      /* Main Container */
-      .container {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 0 1rem;
-        display: flex;
-        gap: 1.5rem;
+      #map,
+      #unrouted-map {
+        height: 80%;
       }
+    }
 
-      /* Input Section */
-      .input-section {
-        flex: 1;
-        background: var(--card-background);
-        padding: 1.5rem;
-        border-radius: 12px;
-        box-shadow: var(--shadow-md);
-        border: 1px solid rgba(0, 0, 0, 0.05);
-      }
+    .mobile-menu-btn {
+      display: none;
+      /* Hide by default */
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
 
-      .input-section h2 {
-        color: var(--primary-color);
-        margin-bottom: 1rem;
-        font-size: 1.25rem;
-      }
-
-      textarea {
-        width: 100%;
-        height: 200px;
-        padding: 1rem;
-        border: 1px solid var(--accent-color);
-        border-radius: 8px;
-        background-color: var(--background-color);
-        color: var(--text-primary);
-        font-size: 0.95rem;
-        resize: vertical;
-        margin-bottom: 1rem;
-      }
-
-      button {
-        width: 100%;
-        padding: 0.75rem 1.25rem;
-        background: var(--gradient);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-
-      button:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-      }
-
-      /* Map Section */
-      .map-section {
-        flex: 2;
-        background: var(--card-background);
-        padding: 1.5rem;
-        border-radius: 12px;
-        box-shadow: var(--shadow-md);
-        border: 1px solid rgba(0, 0, 0, 0.05);
-      }
-
-      .map-section h2 {
-        color: var(--primary-color);
-        margin-bottom: 1rem;
-        font-size: 1.25rem;
-      }
-
-      #map {
-        width: 100%;
-        height: 400px;
-        border-radius: 8px;
-        border: 1px solid var(--accent-color);
-      }
-      #unrouted-map{
-        width: 100%;
-        height: 650px;
-        border-radius: 8px;
-        border: 1px solid var(--accent-color);
-      }
-
-      /* Info Cards */
-      .map-comparison {
-        max-width: 1200px;
-        margin: 1.5rem auto;
-        padding: 0 1rem;
-        display: grid;
-        gap: 1.5rem;
-      }
-
-      .map-box, .distance-info {
-        background: var(--card-background);
-        padding: 1.5rem;
-        border-radius: 12px;
-        box-shadow: var(--shadow-md);
-        border: 1px solid rgba(0, 0, 0, 0.05);
-      }
-
-      .map-title {
-        color: var(--primary-color);
-        margin-bottom: 1rem;
-        font-size: 1.25rem;
-      }
-      #map_88a64e9db7cfeae08320e1a9b73bd09e {
-                    position: relative;
-                    width: 100.0%;
-                    height: 100.0%;
-                    left: 0.0%;
-                    top: 0.0%;
-                }
-                .leaflet-container { font-size: 1rem; }
-
-      .distance-info h2 {
-        color: var(--primary-color);
-        margin-bottom: 1rem;
-        font-size: 1.25rem;
-      }
-
-      .distance-info p, .distance-info li {
-        color: var(--text-secondary);
-        margin-bottom: 0.5rem;
-      }
-
-      /* Footer */
-      footer {
-        background: var(--gradient);
-        color: white;
-        padding: 1.5rem;
-        text-align: center;
-        margin-top: 2rem;
-      }
-
-      footer p {
-        opacity: 0.9;
-        font-size: 0.95rem;
-      }
-
-      /* Error Message */
-      .error {
-        color: #DC2626;
-        margin-top: 1rem;
-        font-size: 0.95rem;
-      }
-
-      /* Responsive Design */
-      @media (max-width: 768px) {
-        .container {
-          flex-direction: column;
-        }
-
-        .input-section, .map-section {
-          width: 100%;
-        }
-
-        .logo-row {
-          font-size: 1.25rem;
-        }
-
-        .logo-row i {
-          font-size: 1.5rem;
-        }
-
-        #map, #unrouted-map {
-          height: 80%;
-        }
-      }
+    @media (max-width: 768px) {
       .mobile-menu-btn {
-  display: none; /* Hide by default */
-  background: none;
-  border: none;
-  color: var(--text-primary);
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 0.5rem;
-}
-
-@media (max-width: 768px) {
-  .mobile-menu-btn {
-    display: block; /* Show on mobile */
-  }
-
-  .nav-links {
-    display: none;
-    flex-direction: column;
-    width: 100%;
-    padding-top: 1rem;
-  }
-
-  .nav-links.show {
-    display: flex;
-  }
-}
-    </style>
-  </head>
-  <body>
-    <header class="header">
-      <div class="logo-row">
-        <i class="fas fa-route"></i>
-        Route Optimizer
-      </div>
-    </header>
-
-    <!-- Modern Navbar -->
-    <nav class="navbar">
-      <div class="nav-container">
-        <button class="mobile-menu-btn">
-          <i class="fas fa-bars"></i> <!-- Font Awesome icon -->
-        </button>
-        <div class="nav-links">
-          <a href="#" onclick="dashboard()">Dashboard</a>
-          <a href="#" class="active">Route Optimization</a>
-          <a href="#" onclick="openPackageOptimisation()">Package Optimization</a>
-          <a href="#" onclick="openWarehouseOptimisation()">Warehouse Optimization</a>
-        </div>
-      </div>
-    </nav>
-    
-
-   <div class="container">
-      <div class="input-section">
-        <h2>Enter Coordinates</h2>
-        <p>Enter coordinates in the format: latitude,longitude (one pair per line)</p>
-        <textarea id="coordinates" placeholder="12.937672,77.592155&#10;12.928767,77.594889&#10;12.938806,77.593194"></textarea>
-        <button onclick="optimizeRoute()">
-          <i class="fas fa-magic"></i> Optimize Route
-        </button>
-        <div id="error" class="error"></div>
-      </div>
-      <div class="map-section">
-        <h2>Optimized Route Map</h2>
-        <div id="map"></div>
-      </div>
-    </div>
-
-    <div class="map-comparison">
-      <div class="map-box">
-        <h2 class="map-title">Unrouted Route Map</h2>
-        <div id="unrouted-map"></div>
-      </div>
-      <div class="distance-info" id="distances"></div>
-      <div class="distance-info" id="emissions">
-        <h2>Emissions Reduction</h2>
-        <p id="emissions-output"></p>
-      </div>
-      <div class="distance-info" id="translated-emissions">
-        <h2>Translated Emissions Reduction</h2>
-        <ul id="translated-emissions-list"></ul>
-      </div>
-    </div>
-
-    <footer>
-      <p>✨ Let's work together for a greener tomorrow! Optimize your routes and reduce your carbon footprint. ✨</p>
-    </footer>
-
-    <script>
-      // document.querySelector('.mobile-menu-btn').addEventListener('click', function () {
-      //   document.querySelector('.nav-links').classList.toggle('show');
-      // });
-      document.querySelector('.mobile-menu-btn').addEventListener('click', function () {
-  document.querySelector('.nav-links').classList.toggle('show');
-});
-
-
-      function optimizeRoute() {
-        const coordinatesText = document.getElementById("coordinates").value;
-        const coordinates = coordinatesText
-          .split("\n")
-          .filter((line) => line.trim())
-          .map((line) => {
-            const [lat, lon] = line
-              .split(",")
-              .map((num) => parseFloat(num.trim()));
-            return [lat, lon];
-          });
-
-if (!coordinates.length) {
-          document.getElementById("error").textContent = "Please enter valid coordinates";
-          return;
-        }
-
-        fetch("/optimize", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ coordinates }),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.error) {
-              document.getElementById("error").textContent = data.error;
-            } else {
-              document.getElementById("error").textContent = "";
-
-              // Insert the optimized map HTML
-              document.getElementById("map").innerHTML = data.optimized_map;
-
-              // Insert the unrouted map HTML
-              document.getElementById("unrouted-map").innerHTML = data.unrouted_map;
-
-              // Display distances and emissions
-              const distancesHtml = `
-                <h2>Route Distances</h2>
-                <p><b>Unrouted Distance:</b> ${data.unrouted_distance.toFixed(2)} km</p>
-                <p><b>Optimized Distance:</b> ${data.optimized_distance.toFixed(2)} km</p>
-              `;
-              document.getElementById("distances").innerHTML = distancesHtml;
-
-              const emissionsHtml = `
-                <p><b>Emissions Reduction:</b> ${data.emissions_reduction.toFixed(2)} kg CO₂</p>
-              `;
-              document.getElementById("emissions-output").innerHTML = emissionsHtml;
-
-              const translatedHtml = Object.entries(data.translated_emissions)
-                .map(([key, value]) => `<li><b>${key}:</b> ${value.toFixed(2)}</li>`)
-                .join("");
-              document.getElementById("translated-emissions-list").innerHTML = translatedHtml;
-            }
-          })
-          .catch((error) => {
-            document.getElementById("error").textContent = "An error occurred: " + error.message;
-          });
+        display: block;
+        /* Show on mobile */
       }
-      function dashboard() {
+
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        padding-top: 1rem;
+      }
+
+      .nav-links.show {
+        display: flex;
+      }
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header">
+    <div class="logo-row">
+      <i class="fas fa-route"></i>
+      Route Optimizer
+    </div>
+  </header>
+
+  <!-- Modern Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <button class="mobile-menu-btn">
+        <i class="fas fa-bars"></i> <!-- Font Awesome icon -->
+      </button>
+      <div class="nav-links">
+        <a href="#" onclick="dashboard()">Dashboard</a>
+        <a href="#" class="active">Route Optimization</a>
+        <a href="#" onclick="openPackageOptimisation()">Package Optimization</a>
+        <a href="#" onclick="openWarehouseOptimisation()">Warehouse Optimization</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="input-section">
+      <h2>Enter Coordinates</h2>
+      <p>Enter coordinates in the format: latitude,longitude (one pair per line)</p>
+      <textarea id="coordinates" placeholder="Enter coordinates...">
+
+12.937672530173884, 77.59215523387832
+12.928767498285646, 77.59488945772341
+12.938806086191653, 77.59319418077574
+12.92679096527194, 77.59426386727272
+12.938898943402936, 77.59174053447116
+</textarea>
+
+      <button onclick="optimizeRoute()">
+        <i class="fas fa-magic"></i> Optimize Route
+      </button>
+      <div id="error" class="error"></div>
+    </div>
+    <div class="map-section">
+      <h2>Optimized Route Map</h2>
+      <div id="map"></div>
+    </div>
+  </div>
+
+  <div class="map-comparison">
+    <div class="map-box hidden" id="unrouted-map-section">
+      <h2 class="map-title">Unrouted Route Map</h2>
+      <div id="unrouted-map"></div>
+    </div>
+    <div class="distance-info hidden" id="distances"></div>
+    <div class="distance-info hidden" id="emissions">
+      <h2>Emissions Reduction</h2>
+      <p id="emissions-output"></p>
+    </div>
+    <div class="distance-info hidden" id="translated-emissions">
+      <h2>Translated Emissions Reduction</h2>
+      <ul id="translated-emissions-list"></ul>
+    </div>
+  </div>
+
+  <!-- Footer Section -->
+  <footer>
+    <p>✨ Let's work together for a greener tomorrow! Optimize your routes and reduce your carbon footprint. ✨</p>
+    <div class="footer-links">
+      <a href="#" onclick="dashboard()">Dashboard</a>
+      <a href="#" class="active">Route Optimization</a>
+      <a href="#" onclick="openPackageOptimisation()">Package Optimization</a>
+      <a href="#" onclick="openWarehouseOptimisation()">Warehouse Optimization</a>
+    </div>
+    <p>&copy; 2025 Eco-Friendly Route Optimizer. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.querySelector('.mobile-menu-btn').addEventListener('click', function () {
+      document.querySelector('.nav-links').classList.toggle('show');
+    });
+
+    function optimizeRoute() {
+      const coordinatesText = document.getElementById("coordinates").value;
+      const coordinates = coordinatesText
+        .split("\n")
+        .filter((line) => line.trim())
+        .map((line) => {
+          const [lat, lon] = line
+            .split(",")
+            .map((num) => parseFloat(num.trim()));
+          return [lat, lon];
+        });
+
+      if (!coordinates.length) {
+        document.getElementById("error").textContent = "Please enter valid coordinates";
+        return;
+      }
+
+      fetch("/optimize", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ coordinates }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error) {
+            document.getElementById("error").textContent = data.error;
+          } else {
+            document.getElementById("error").textContent = "";
+
+            // Show the sections
+            document.getElementById("unrouted-map-section").classList.remove("hidden");
+            document.getElementById("distances").classList.remove("hidden");
+            document.getElementById("emissions").classList.remove("hidden");
+            document.getElementById("translated-emissions").classList.remove("hidden");
+
+            // Insert the optimized map HTML
+            document.getElementById("map").innerHTML = data.optimized_map;
+
+            // Insert the unrouted map HTML
+            document.getElementById("unrouted-map").innerHTML = data.unrouted_map;
+
+            // Display distances and emissions
+            const distancesHtml = `
+              <h2>Route Distances</h2>
+              <p><b>Unrouted Distance:</b> ${data.unrouted_distance.toFixed(2)} km</p>
+              <p><b>Optimized Distance:</b> ${data.optimized_distance.toFixed(2)} km</p>
+            `;
+            document.getElementById("distances").innerHTML = distancesHtml;
+
+            const emissionsHtml = `
+              <p><b>Emissions Reduction:</b> ${data.emissions_reduction.toFixed(2)} kg CO₂</p>
+            `;
+            document.getElementById("emissions-output").innerHTML = emissionsHtml;
+
+            const translatedHtml = Object.entries(data.translated_emissions)
+              .map(([key, value]) => `<li><b>${key}:</b> ${value.toFixed(2)}</li>`)
+              .join("");
+            document.getElementById("translated-emissions-list").innerHTML = translatedHtml;
+          }
+        })
+        .catch((error) => {
+          document.getElementById("error").textContent = "An error occurred: " + error.message;
+        });
+    }
+
+    function dashboard() {
       window.location.href = "/dashboard";
     }
 
@@ -551,6 +546,7 @@ if (!coordinates.length) {
     function openWarehouseOptimisation() {
       window.location.href = "/warehouse_optimisation";
     }
-    </script>
-  </body>
+  </script>
+</body>
+
 </html>
